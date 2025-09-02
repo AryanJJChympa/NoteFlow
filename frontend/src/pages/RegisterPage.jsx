@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import api from "../lib/axios";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function Register() {
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,64 +19,114 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await api.post("/auth/register", formData);
-      navigate("/login"); // After register, go to login
+      toast.success("Registration successful!");
+      navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      toast.error(err.response?.data?.message || "Registration failed");
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
-        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="flex items-center justify-center min-h-screen relative bg-transparent px-4">
+      {/* Dark Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/80 backdrop-blur-sm"></div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="relative z-10 w-full max-w-md bg-neutral-900/70 border border-neutral-800 rounded-2xl shadow-2xl p-8 backdrop-blur-lg"
+      >
+        {/* Title */}
+        <h2 className="text-3xl font-bold text-center text-white mb-6">
+          Create Account ✍️
+        </h2>
+        <p className="text-neutral-400 text-center mb-8">
+          Join us and start your journey today
+        </p>
+
+        {/* Full Name */}
+        <div className="mb-5">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-neutral-300 mb-2"
+          >
+            Full Name
+          </label>
           <input
             type="text"
             name="name"
-            placeholder="Full Name"
-            value={formData.name}
+            id="name"
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            value={formData.name}
             required
+            placeholder="Enter your full name"
+            className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
+        </div>
+
+        {/* Email */}
+        <div className="mb-5">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-neutral-300 mb-2"
+          >
+            Email Address
+          </label>
           <input
             type="email"
             name="email"
-            placeholder="Email"
-            value={formData.email}
+            id="email"
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            value={formData.email}
             required
+            placeholder="Enter your email"
+            className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
+        </div>
+
+        {/* Password */}
+        <div className="mb-5">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-neutral-300 mb-2"
+          >
+            Password
+          </label>
           <input
             type="password"
             name="password"
-            placeholder="Password"
-            value={formData.password}
+            id="password"
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            value={formData.password}
             required
+            placeholder="Enter your password"
+            className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
-          <button
-            type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg transition"
-          >
-            Register
-          </button>
-        </form>
-        <p className="text-sm text-gray-600 mt-4 text-center">
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 transition-all text-white font-semibold py-3 rounded-xl shadow-lg disabled:opacity-50"
+        >
+          {loading ? "Registering..." : "Register"}
+        </button>
+
+        {/* Login Link */}
+        <p className="text-center text-neutral-400 mt-6">
           Already have an account?{" "}
           <span
-            className="text-purple-600 cursor-pointer"
             onClick={() => navigate("/login")}
+            className="text-blue-500 hover:text-blue-400 cursor-pointer font-medium"
           >
-            Login here
+            Login
           </span>
         </p>
-      </div>
+      </form>
     </div>
   );
 }
