@@ -4,7 +4,7 @@ import CreatePage from "./pages/CreatePage"
 import NoteDetailPage from "./pages/NoteDetailPage"
 import Register from "./pages/RegisterPage";
 import Login from "./pages/LoginPage";
-import PrivateRoute from "./component/privateRoutes";
+import PrivateRoutes from "./component/PrivateRoutes";
 
 const App = () => {
   return (
@@ -17,19 +17,19 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path='/' element={
-          <PrivateRoute>
+          <PrivateRoutes>
             <HomePage />
-          </PrivateRoute>
+          </PrivateRoutes>
           } />
         <Route path='/create' element={
-          <PrivateRoute>
+          <PrivateRoutes>
             <CreatePage />
-          </PrivateRoute>
+          </PrivateRoutes>
           } />
         <Route path='/note/:id' element={
-          <PrivateRoute>
+          <PrivateRoutes>
             <NoteDetailPage />
-          </PrivateRoute>
+          </PrivateRoutes>
           } />
       </Routes>
     </div>
