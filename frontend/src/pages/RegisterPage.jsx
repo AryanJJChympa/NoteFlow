@@ -26,6 +26,8 @@ export default function Register() {
       navigate("/login");
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration failed");
+      console.log(err);
+      
       setLoading(false);
     }
   };

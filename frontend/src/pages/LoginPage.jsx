@@ -22,6 +22,7 @@ export default function Login() {
       navigate("/"); // Redirect to homepage after login
     } catch (err) {
       console.log(err.response?.data?.message || "Login failed");
+      console.error(err);
       toast.error("Login Failed!");
       setLoading(false);
     }
