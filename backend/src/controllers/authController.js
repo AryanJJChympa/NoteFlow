@@ -1,4 +1,5 @@
 // controllers/authController.js
+import { redis } from "../config/upstash.js";
 import User from "../model/userModel.js";
 import jwt from "jsonwebtoken";
 
@@ -60,14 +61,16 @@ export const loginUser = async (req, res) => {
   }
 };
 
-const blacklist = new Set();
-
-export const logoutUser = (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (token) {
-    blacklist.add(token);
+// Logout user (blacklist token in Redis)
+export const logoutUser = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (token) {
+      await redis.set(token, "blacklisted", { ex: 7 * 24 * 60 * 60 }); // 7 days
+    }
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error("Logout error:", err);
+    res.status(500).json({ message: "Server error" });
   }
-  return res.status(200).json({ message: "Logged out successfully" });
 };
-
-export const isTokenBlacklisted = (token) => blacklist.has(token);

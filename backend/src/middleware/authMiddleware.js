@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../model/userModel.js";
-import { isTokenBlacklisted } from "../controllers/authController.js";
+// import { isTokenBlacklisted } from "../controllers/authController.js";
+import { redis } from "../config/upstash.js";
 
 const protect = async (req, res, next) => {
   let token;
@@ -13,10 +14,12 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
 
       // 1. Check if token is blacklisted
-      if (isTokenBlacklisted(token)) {
+       const isBlacklisted = await redis.get(token);
+      if (isBlacklisted(token)) {
         return res.status(401).json({ message: "Token expired. Please log in again." });
       }
 
+      
       // 2. Verify JWT
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -29,6 +32,7 @@ const protect = async (req, res, next) => {
       req.user = user;
       next();
     } catch (error) {
+      console.error("Protect middleware error:", err);
       return res.status(401).json({ message: "Not authorized, token failed" });
     }
   } else {
