@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react'
-import Navbar from '../component/Navbar'
-import RateLimitedUI from '../component/RateLimiterUI'
-import toast from "react-hot-toast"
-import NoteCard from '../component/NoteCard';
-import api from '../lib/axios';
-import NotesNotFound from '../component/NotesNotFound';
+import { useEffect, useMemo, useState } from "react";
+import Navbar from "../component/Navbar";
+import RateLimitedUI from "../component/RateLimiterUI";
+import toast from "react-hot-toast";
+import NoteCard from "../component/NoteCard";
+import api from "../lib/axios";
+import NotesNotFound from "../component/NotesNotFound";
+import Fuse from "fuse.js";
 
 const HomePage = () => {
   const [isRateLimited, setRateLimited] = useState(false);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const res = await api.get("/notes");
-        
+
         // const res = await api.get("/notes");
         console.log(res.data);
         setNotes(res.data);
@@ -30,27 +32,48 @@ const HomePage = () => {
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchNotes();
-  }, [])
+  }, []);
+
+  // Fuse.js setup — recompute only when notes change
+  const fuse = useMemo(() => {
+    return new Fuse(notes, {
+      keys: ["title", "content"],
+      threshold: 0.3,
+    });
+  }, [notes]);
+
+  const filteredNotes = useMemo(() => {
+    if (!searchQuery) return notes;
+    return fuse.search(searchQuery).map((result) => result.item);
+  }, [searchQuery, fuse, notes]);
 
   return (
-    <div className='min-h-screen'>
-      <Navbar />
+    <div className="min-h-screen">
+      {/* Pass down onSearchChange prop */}
+      <Navbar onSearchChange={setSearchQuery} />
       {isRateLimited && <RateLimitedUI />}
-      <div className='max-w-7xl mx-auto p-4 mt-6'>
-        {loading && <div className='text-center text-primary text-lg py-10'> Loading notes...</div>}
-        {notes.length === 0 && !isRateLimited && <NotesNotFound />}
-        {notes.length > 0 && !isRateLimited && (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {notes.map(note => (
+      <div className="max-w-7xl mx-auto p-4 mt-6">
+        {loading && (
+          <div className="text-center text-primary text-lg py-10">
+            {" "}
+            Loading notes...
+          </div>
+        )}
+
+        {filteredNotes.length === 0 && !isRateLimited && <NotesNotFound />}
+
+        {filteredNotes.length > 0 && !isRateLimited && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredNotes.map((note) => (
               <NoteCard key={note._id} note={note} setNotes={setNotes} />
             ))}
           </div>
-        )}
+        )} 
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

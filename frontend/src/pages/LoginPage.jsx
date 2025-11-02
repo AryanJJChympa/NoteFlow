@@ -17,12 +17,15 @@ export default function Login() {
     e.preventDefault();
      setLoading(true);
     try {
+      // const { data } = await api.post("/auth/login", formData);
       const { data } = await api.post("/auth/login", formData);
       localStorage.setItem("token", data.token);
       navigate("/"); // Redirect to homepage after login
     } catch (err) {
       console.log(err.response?.data?.message || "Login failed");
       toast.error("Login Failed!");
+      setLoading(false);
+    }finally{
       setLoading(false);
     }
   };
