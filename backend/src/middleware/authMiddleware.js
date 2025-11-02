@@ -4,6 +4,7 @@ import User from "../model/userModel.js";
 import { redis } from "../config/upstash.js";
 
 const protect = async (req, res, next) => {
+  
   let token;
 
   if (
@@ -11,14 +12,15 @@ const protect = async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
+      
       token = req.headers.authorization.split(" ")[1];
-
+      
       // 1. Check if token is blacklisted
       const isBlacklisted = await redis.get(token)
       if (isBlacklisted) {
         return res.status(401).json({ message: "Token expired. Please log in again." });
       }
-
+      
       
       // 2. Verify JWT
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -28,7 +30,8 @@ const protect = async (req, res, next) => {
       if (!user) {
         return res.status(401).json({ message: "User not found. Please register again." });
       }
-
+    
+      
       req.user = user;
       next();
     } catch (error) {

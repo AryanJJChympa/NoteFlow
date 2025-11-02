@@ -40,10 +40,12 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    
     const user = await User.findOne({ email });
-
+    console.log("USER found",user);
+    
     if (!user || !(await user.matchPassword(password))) {
+      
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
