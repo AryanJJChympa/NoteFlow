@@ -26,13 +26,6 @@
 ```markdown
 # 📝 NoteFlow
 
-![MERN](https://img.shields.io/badge/Stack-MERN-blue?style=for-the-badge&logo=mongodb&logoColor=white)
-![Node.js](https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge&logo=node.js&logoColor=white)
-![React](https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![MongoDB](https://img.shields.io/badge/Database-MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
-![License](https://img.shields.io/badge/License-ISC-yellow?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)
-
 > A modern, full-stack note-taking web app that allows users to create, read, update, and delete notes — with authentication, search, and rate limiting.
 
 ---
