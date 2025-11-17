@@ -225,16 +225,6 @@ BCA Student | MERN Developer | Problem Solver
 
 ---
 
-## 📄 License
-
-This project is licensed under the ISC License.
-See the [LICENSE](LICENSE) file for more details.
-
----
-
-> *“Built with passion and continuous improvement in mind.”* 🚀
-
 ```
 
----
 
